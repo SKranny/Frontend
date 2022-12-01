@@ -1,0 +1,28 @@
+<!-- eslint-disable max-len -->
+<template>
+  <icon-box width="10" height="10" viewBox="0 0 10 10" fill="none">
+    <rect
+      width="1.67134"
+      height="10.5738"
+      rx="0.835672"
+      transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 8.39871 9.45898)"
+      fill="#FF5573"
+    />
+
+    <rect
+      width="1.67134"
+      height="10.5738"
+      rx="0.835672"
+      transform="matrix(-0.707107 -0.707107 -0.707107 0.707107 9.5806 1.98242)"
+      fill="#FF5573"
+    />
+  </icon-box>
+</template>
+
+<script>
+import IconBox from './IconBox.vue';
+
+export default {
+  components: { IconBox },
+};
+</script>

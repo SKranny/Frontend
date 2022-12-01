@@ -1,0 +1,84 @@
+.search-filter 
+  display flex 
+  align-items flex-end 
+  padding 25px 0 
+  
+  @media (max-width breakpoint-xl) 
+   flex-wrap wrap
+   padding 10px 0
+
+.search-filter__block 
+  &+& 
+    margin-left 60px 
+  
+  & + &.lastname 
+    margin-left 20px 
+   
+  &.age 
+    width 100% 
+    max-width 280px 
+
+    .search__age-defis 
+      margin 0 5px 
+     
+  &.region 
+    width 100% 
+    max-width 360px 
+
+    .search-filter__select 
+      max-width 170px  
+
+  &.time 
+    width 100%
+    max-width 240px
+    .search-filter__select 
+      max-width 100% 
+
+  &.tags 
+    width 100%
+    max-width 300px
+    .add-tags__input 
+      width 100%
+      max-width 220px
+  
+    .add-tags__block 
+      margin-bottom 0  
+   
+  .select + .select 
+    margin-top 0 
+    margin-left 20px 
+   
+  @media (max-width breakpoint-xxl) 
+    &+& 
+      margin-left 20px    
+   
+  @media (max-width breakpoint-xl) 
+    width 100%
+    max-width 50%
+    &:last-child 
+      max-width 280px
+     
+    &+& 
+      margin-left 0
+     
+    &.name,&.lastname 
+      max-width 25%
+     
+    &.lastname 
+      margin-right auto
+      margin-left 20px
+     
+    &.region 
+      margin-top 20px
+     
+    &.time,
+    &.btn-news
+      margin-left 20px
+     
+    &.tags 
+      margin-top 20px
+      max-width 50%
+
+.search-filter__select
+  width 100%
+  max-width 130px 

@@ -1,0 +1,104 @@
+.btn
+  margin-left  10px
+  display inline-flex
+  justify-content center
+  align-items center
+  appearance none
+  background  eucalypt;
+  font-style  normal;
+  font-weight  normal;
+  font-size  15px;
+  line-height  22px;
+  letter-spacing  0.01em;
+  color  #fff;
+  height 40px
+  min-width 160px
+  max-width 100%
+  padding 0 43px
+  position relative
+  z-index 0
+  overflow hidden
+  cursor pointer
+  white-space nowrap
+  transition all .2s
+
+  &.btn--white
+    background-color #fff
+    color eucalypt
+
+    &:hover
+      color #fff
+
+  &.btn--red
+    background-color #fff
+    color #E64F61
+    border-color #E64F61 !important
+
+    &:hover
+      color #fff
+
+  &.btn--warning
+    background-color #E74F61
+    color #fff
+    border-color #E74F61 !important
+
+  &.btn--fill
+    background-color transparent
+    color eucalypt
+    border-color eucalypt !important
+
+    &:hover
+      color #fff
+
+  &.btn--dark
+    background-color #383853
+    color #fff
+
+    &:hover
+      background-color #3C3C5B
+
+      .helper
+        width 0
+        height 0
+
+    &:active,&:focus
+      background-color #2E2E44
+
+  &.btn--bordered
+    border 1px solid eucalypt
+
+    &:hover
+      border-color transparent !important
+
+  &.btn--disable
+    background-color #BCBCC7
+    color #fff
+    cursor not-allowed
+
+    &:hover
+
+      .helper
+        width 0
+        height 0
+
+  &:hover
+
+    .helper
+      width 500px
+      height 500px
+
+  &:active,&:focus
+
+    .helper
+      background-color #000
+      
+  .helper
+    display block
+    width 0
+    height 0
+    border-radius 50%
+    background-color #1D1C2A
+    position absolute
+    transform translate(-50%, -50%)
+    transition width .2s ease, height .2s ease
+    z-index -1

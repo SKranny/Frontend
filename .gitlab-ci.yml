@@ -1,0 +1,51 @@
+image: node:16.13.1
+  
+
+stages:
+  - build
+  - deploy_docker
+  - deploy_prod
+
+build:
+  stage: build
+  only:
+    - develop
+  before_script:
+    - npm install
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist
+
+deploy_docker:
+  image: docker:19.03.12
+  stage: deploy_docker
+  only:
+    - develop
+  before_script:
+    - docker logout
+    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+  script:
+    - docker build -f Dockerfile-ci -t $BACK_IMAGE .
+    - docker push $BACK_IMAGE
+  artifacts:
+    paths:
+      - dist
+
+deploy_prod:
+  stage: deploy_prod
+  only:
+    - develop
+  except:
+    - tags
+  before_script:
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $PROD_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh $PROD_USER@$PROD_HOST "kubectl rollout restart -n $NAMESPACE deployment $DEPLOYMENT_NAME"
