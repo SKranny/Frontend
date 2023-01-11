@@ -1,5 +1,15 @@
 image: node:16.13.1
-  
+
+services:
+  - name: docker:dind
+    alias: dockerdaemon
+    entrypoint: ["env", "-u", "DOCKER_HOST"]
+    command: ["dockerd-entrypoint.sh"]
+
+variables:
+  DOCKER_HOST: tcp://dockerdaemon:2375/
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
 
 stages:
   - build
@@ -25,27 +35,33 @@ deploy_docker:
     - develop
   before_script:
     - docker logout
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS https://index.docker.io/v1/
+    - docker login -u $DOCKER_LOGIN -p $DOCKER_PASS docker.io
   script:
-    - docker build -f Dockerfile-ci -t $BACK_IMAGE .
-    - docker push $BACK_IMAGE
+    - docker build -f Dockerfile-ci -t $DOCKER_LOGIN/frontend:latest .
+    - docker push $DOCKER_LOGIN/frontend:latest
   artifacts:
     paths:
       - dist
 
 deploy_prod:
-  stage: deploy_prod
+  image: ubuntu:latest
+  stage: deploy
   only:
     - develop
   except:
     - tags
   before_script:
-    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | ssh-add -
+    - echo "cherry" | tr -d '\r' | ssh-add <(echo "$SSH_PRIVATE_KEY")
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - ssh-keyscan $PROD_HOST >> ~/.ssh/known_hosts
+    - echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh $PROD_USER@$PROD_HOST "kubectl rollout restart -n $NAMESPACE deployment $DEPLOYMENT_NAME"
+    - ssh deployer@$SERVER_IP "
+      echo "$SERVER_PASS" | sudo -S docker login -u $DOCKER_LOGIN -p $DOCKER_PASS docker.io;
+      echo "$SERVER_PASS" | sudo -S docker-compose stop frontend;
+      echo "$SERVER_PASS" | sudo -S docker-compose pull frontend;
+      echo "$SERVER_PASS" | sudo -S docker-compose up -d frontend"
